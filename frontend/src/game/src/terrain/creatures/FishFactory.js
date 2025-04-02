@@ -48,7 +48,7 @@ class FishFactory {
   }
 
   async init(terrain_geometry, terrain_obj) {
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 8; i++) {
       let fish = new Fish(
         terrain_geometry,
         terrain_obj,
@@ -57,7 +57,7 @@ class FishFactory {
       this.creatures.push(fish);
     }
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 3; i++) {
       let jellyfish = new JellyFish(
         terrain_geometry,
         terrain_obj,

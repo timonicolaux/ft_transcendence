@@ -71,72 +71,60 @@ class Renderer {
     requestAnimationFrame(render);
   }
 
-  updateElementsPositions() {
+  updateElementsPositions(deltaTime) {
     const positions = this.gameManager.positions;
     const currentClientTime = Date.now() / 1000;
     const serverTimestamp = positions.timestamp;
     const dataAge = currentClientTime - serverTimestamp;
-    const predictionThreshold = 0.1;
+    const currentFps = deltaTime > 0 ? 1 / deltaTime : 60;
+    const optimalFps = 60;
+    const lowFpsThreshold = 45;
+    const maxLerpFactor = 0.65;
+    const minLerpFactor = 0.99;
 
-    const lerpFactor = 0.3;
+    const fpsRatio = Math.min(
+      1,
+      Math.max(
+        0,
+        (currentFps - lowFpsThreshold) / (optimalFps - lowFpsThreshold),
+      ),
+    );
+    const lerpFactor =
+      minLerpFactor + fpsRatio * (maxLerpFactor - minLerpFactor);
 
-    if (dataAge > predictionThreshold) {
-      const predictedLeftPaddleX =
-        positions.paddles.left.pos + positions.paddles.left.vel * dataAge;
-      const predictedRightPaddleX =
-        positions.paddles.right.pos + positions.paddles.right.vel * dataAge;
+    const basePredictionTime = dataAge;
+    const maxPredictionTime = 0.5;
+    const predictedTime = Math.min(basePredictionTime, maxPredictionTime);
+    const leftPaddle = this.game.paddleLeft.obj;
+    const rightPaddle = this.game.paddleRight.obj;
+    const ball = this.game.ball.obj;
 
-      this.game.paddleLeft.obj.position.x +=
-        (predictedLeftPaddleX - this.game.paddleLeft.obj.position.x) *
-        lerpFactor;
-      this.game.paddleRight.obj.position.x +=
-        (predictedRightPaddleX - this.game.paddleRight.obj.position.x) *
-        lerpFactor;
+    const targetLeftX =
+      positions.paddles.left.pos + positions.paddles.left.vel * predictedTime;
+    const targetRightX =
+      positions.paddles.right.pos + positions.paddles.right.vel * predictedTime;
 
-      const predictedBallX =
-        positions.ball.pos.x + positions.ball.vel.x * dataAge;
-      const predictedBallY =
-        positions.ball.pos.y + positions.ball.vel.y * dataAge;
-      const predictedBallZ =
-        positions.ball.pos.z + positions.ball.vel.z * dataAge;
+    leftPaddle.position.x += (targetLeftX - leftPaddle.position.x) * lerpFactor;
+    rightPaddle.position.x +=
+      (targetRightX - rightPaddle.position.x) * lerpFactor;
 
-      this.game.ball.obj.position.x +=
-        (predictedBallX - this.game.ball.obj.position.x) * lerpFactor;
-      this.game.ball.obj.position.y +=
-        (predictedBallY - this.game.ball.obj.position.y) * lerpFactor;
-      this.game.ball.obj.position.z +=
-        (predictedBallZ - this.game.ball.obj.position.z) * lerpFactor;
-    } else {
-      const newLeftPaddleX =
-        positions.paddles.left.pos + positions.paddles.left.vel * (1 / 50);
-      const newRightPaddleX =
-        positions.paddles.right.pos + positions.paddles.right.vel * (1 / 50);
+    const targetBallX =
+      positions.ball.pos.x + positions.ball.vel.x * predictedTime;
+    const targetBallY =
+      positions.ball.pos.y + positions.ball.vel.y * predictedTime;
+    const targetBallZ =
+      positions.ball.pos.z + positions.ball.vel.z * predictedTime;
 
-      this.game.paddleLeft.obj.position.x +=
-        (newLeftPaddleX - this.game.paddleLeft.obj.position.x) * lerpFactor;
-      this.game.paddleRight.obj.position.x +=
-        (newRightPaddleX - this.game.paddleRight.obj.position.x) * lerpFactor;
+    const ballLerpFactor = lerpFactor * 0.7;
+    ball.position.x += (targetBallX - ball.position.x) * ballLerpFactor;
+    ball.position.y += (targetBallY - ball.position.y) * ballLerpFactor;
+    ball.position.z += (targetBallZ - ball.position.z) * ballLerpFactor;
 
-      this.game.ball.obj.position.set(
-        positions.ball.pos.x,
-        positions.ball.pos.y,
-        positions.ball.pos.z
-      );
-    }
     this.game.ball.velocity.set(
       positions.ball.vel.x,
       positions.ball.vel.y,
-      positions.ball.vel.z
+      positions.ball.vel.z,
     );
-
-    //const currentTime = Date.now();
-    //this.frameCount++;
-    //if (currentTime - this.fpsDisplayTime >= 1000) {
-    //  const fps = this.frameCount;
-    //  console.log(`FPS: ${fps}`);
-    //  this.frameCount = 0;
-    //  this.fpsDisplayTime = currentTime;
-    //}
   }
 
   sceneRotationUpdate(deltaTime) {
@@ -154,7 +142,7 @@ class Renderer {
         deltaTime,
         state.gameManager,
         this.game.ball.obj.position,
-        this.game.ball.velocity
+        this.game.ball.velocity,
       );
     }
     if (state.gameMode != "OnlineRight") {
@@ -162,7 +150,7 @@ class Renderer {
         deltaTime,
         state.gameManager,
         this.game.ball.obj.position,
-        this.game.ball.velocity
+        this.game.ball.velocity,
       );
     }
   }

@@ -96,7 +96,7 @@ export class GameScene {
       "Left Paddle Creation",
       async () =>
         new Paddle(this.arena, "left", this.players.left, this.config),
-      10
+      10,
     );
 
     this.paddleRight = await updateLoadingTime(
@@ -104,14 +104,14 @@ export class GameScene {
       "Right Paddle Creation",
       async () =>
         new Paddle(this.arena, "right", this.players.right, this.config),
-      10
+      10,
     );
 
     this.ball = await updateLoadingTime(
       "Ball",
       "Ball Creation",
       async () => new Ball(this.config.getSize(), this.config.getBallConfig()),
-      5
+      5,
     );
 
     await this.arena.initialized;
@@ -124,20 +124,18 @@ export class GameScene {
     this.terrainFactory = new TerrainFactory();
     this.terrain = this.terrainFactory.create(
       this.config.getSize(),
-      this.config.getGenerationConfig("corrals")
+      this.config.getGenerationConfig("corrals"),
     );
     await this.terrain.initialized;
     this.sea = this.terrainFactory.create(
       this.config.getSize(),
-      this.config.getGenerationConfig("sea")
+      this.config.getGenerationConfig("sea"),
     );
-    this.sky = new SkyGenerator(this.config.getSkyConfig());
     this.fishFactory = new FishFactory(this.terrain.geometry, this.terrain.obj);
     await this.fishFactory.initialized;
     for (let creature of this.fishFactory.creatures) {
       this.scene.add(creature.obj);
     }
-    this.scene.add(this.sky.sky);
     this.scene.add(this.terrain.obj);
     this.scene.add(this.sea.obj);
   }
@@ -150,7 +148,7 @@ export class GameScene {
       this.paddleLeft.obj,
       this.paddleRight.obj,
       this.ball.sparks.group,
-      this.camera
+      this.camera,
     );
     this.sceneToRotateWithCamera.position.set(0, 0, 0);
     this.scene.add(this.sceneToRotateWithCamera);
@@ -163,7 +161,7 @@ export class GameScene {
     this.camera = init_camera(
       this.renderer,
       this.arena.obj,
-      this.config.getCameraConfig()
+      this.config.getCameraConfig(),
     );
 
     this.makeSceneGroups();
@@ -188,7 +186,7 @@ export class GameScene {
       this.renderer,
       this.scene,
       this.camera,
-      game
+      game,
     );
 
     this.state.setGameHasLoaded();

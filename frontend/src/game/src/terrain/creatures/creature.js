@@ -145,28 +145,28 @@ export default class Creature {
       z: this.obj.position.z + this.velocity.z,
     };
 
-    if (futurePosition.x < this.center.x - this.width / 2) {
-      this.obj.position.x = this.center.x - this.width / 2;
+    if (futurePosition.x < this.center.x - this.width * 0.5) {
+      this.obj.position.x = this.center.x - this.width * 0.5;
       res = true;
     }
-    if (futurePosition.x > this.center.x + this.width / 2) {
-      this.obj.position.x = this.center.x + this.width / 2;
+    if (futurePosition.x > this.center.x + this.width * 0.5) {
+      this.obj.position.x = this.center.x + this.width * 0.5;
       res = true;
     }
-    if (futurePosition.y < this.center.y - this.height / 2) {
-      this.obj.position.y = this.center.y - this.height / 2;
+    if (futurePosition.y < this.center.y - this.height * 0.5) {
+      this.obj.position.y = this.center.y - this.height * 0.5;
       res = true;
     }
     if (futurePosition.y > this.max_y) {
       this.obj.position.y = this.max_y;
       res = true;
     }
-    if (futurePosition.z < this.center.z - this.depth / 2) {
-      this.obj.position.z = this.center.z - this.depth / 2;
+    if (futurePosition.z < this.center.z - this.depth * 0.5) {
+      this.obj.position.z = this.center.z - this.depth * 0.5;
       res = true;
     }
-    if (futurePosition.z > this.center.z + this.depth / 2) {
-      this.obj.position.z = this.center.z + this.depth / 2;
+    if (futurePosition.z > this.center.z + this.depth * 0.5) {
+      this.obj.position.z = this.center.z + this.depth * 0.5;
       res = true;
     }
 
