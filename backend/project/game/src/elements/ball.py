@@ -78,6 +78,12 @@ class Ball:
         if self.is_falling:
             return None, None
 
+        if (
+            self.position.z < -self.ARENA_DEPTH / 2 + 2
+            or self.position.z > self.ARENA_DEPTH / 2 - 2
+        ):
+            return None, None
+
         half_width = self.ARENA_WIDTH / 2
         left_paddle_z = -self.ARENA_DEPTH / 2 + self.PADDLE_DEPTH / 2
         right_paddle_z = self.ARENA_DEPTH / 2 - self.PADDLE_DEPTH / 2
